@@ -14,6 +14,6 @@ class BasePersonalInformation(SQLModel):
 class PersonalInformation(BasePersonalInformation, table=True):
      __table_name = 'personal_info'
      id: int = Field(default=None, primary_key=True, index=True)
-     user_id: int = Field(sa_column=Column(
+     user_id: str = Field(sa_column=Column(
              ForeignKey('users.id', ondelete="CASCADE"), nullable=True))
      age: int = Field(nullable=False)

@@ -11,12 +11,15 @@ class BaseUsers(SQLModel):
              type_=String,
              index=True,
              unique=True))
-     role: str = Field(default='user')
 
 
 class Users(BaseUsers, table=True):
      __tablename__ = 'users'
-     id: int = Field(default=None, primary_key=True, index=True)
-     display_id : str = Field(default=str(uuid.uuid4()))
+     id: str = Field(default=str(uuid.uuid4()), primary_key=True, index=True)
+     role: str = Field(default='user')
      hash_password: str = Field()
      status: str = Field(default='pending', index=True)
+
+
+class CreateUser(BaseUsers):
+     password: str

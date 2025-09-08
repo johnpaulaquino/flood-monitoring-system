@@ -13,4 +13,4 @@ class BaseAddress(SQLModel):
 class Address(BaseAddress, table=True):
      __tablename__ = 'address'
      id: int = Field(default=None, primary_key=True, index=True)
-     user_id: int = Field(foreign_key='users.id', ondelete="CASCADE")
+     user_id: str = Field(foreign_key='users.id', ondelete="CASCADE")

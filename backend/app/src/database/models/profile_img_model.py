@@ -12,4 +12,4 @@ class BaseProfileImage(SQLModel):
 class ProfileImage(BaseProfileImage,table=True):
      __table_name = "profile_img"
      id : int = Field(default=None, primary_key=True, index=True)
-     user_id : int = Field(foreign_key='users.id')
+     user_id : str = Field(foreign_key='users.id')

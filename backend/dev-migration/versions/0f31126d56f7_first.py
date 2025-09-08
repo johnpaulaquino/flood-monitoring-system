@@ -1,8 +1,8 @@
 """first
 
-Revision ID: 88030d8c0b1d
+Revision ID: 0f31126d56f7
 Revises: 
-Create Date: 2025-09-07 18:50:00.061152
+Create Date: 2025-09-08 18:39:51.748215
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa,sqlmodel
 
 
 # revision identifiers, used by Alembic.
-revision: str = '88030d8c0b1d'
+revision: str = '0f31126d56f7'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -25,8 +25,7 @@ def upgrade() -> None:
     sa.Column('username', sa.String(), nullable=True),
     sa.Column('email', sa.String(), nullable=True),
     sa.Column('role', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('display_id', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
+    sa.Column('id', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('hash_password', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('status', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.PrimaryKeyConstraint('id')
@@ -41,7 +40,7 @@ def upgrade() -> None:
     sa.Column('municipality', sqlmodel.sql.sqltypes.AutoString(), nullable=True),
     sa.Column('province', sqlmodel.sql.sqltypes.AutoString(), nullable=True),
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.Column('user_id', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
@@ -53,7 +52,7 @@ def upgrade() -> None:
     sa.Column('birthdate', sa.Date(), nullable=False),
     sa.Column('gender', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('user_id', sa.Integer(), nullable=True),
+    sa.Column('user_id', sqlmodel.sql.sqltypes.AutoString(), nullable=True),
     sa.Column('age', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
@@ -63,7 +62,7 @@ def upgrade() -> None:
     sa.Column('img_url', sqlmodel.sql.sqltypes.AutoString(), nullable=True),
     sa.Column('public_key', sqlmodel.sql.sqltypes.AutoString(), nullable=True),
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.Column('user_id', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
