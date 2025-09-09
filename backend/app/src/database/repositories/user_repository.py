@@ -1,9 +1,8 @@
-from sqlalchemy.testing.pickleable import User
 from sqlmodel import delete, select, update
 
 from app.src.database.engine_creator import create_session
 from app.src.database.models import Address, PersonalInformation, ProfileImage, Users
-from app.src.utils.auth_utils import AuthUtils
+from app.src.security.auth_security import AuthSecurity
 
 
 class UserRepository:
@@ -54,7 +53,7 @@ class UserRepository:
                     raise e
 
      @staticmethod
-     async def active_user_account(email: str):
+     async def activate_user_account(email: str):
           """
           To mark the user as activated.
           :param email: is a unique from user to activate his/her account.
@@ -84,7 +83,7 @@ class UserRepository:
      async def update_password(cls, email: str, new_password: str):
           async with create_session() as db:
                try:
-                    hashed_new_password = AuthUtils.hash_password(new_password)
+                    hashed_new_password = AuthSecurity.hash_password(new_password)
                     stmt = update(Users).values(
                             hash_password=hashed_new_password,
                     ).where(Users.email == email)

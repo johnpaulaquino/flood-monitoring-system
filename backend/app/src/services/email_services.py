@@ -39,7 +39,6 @@ class EmailServices:
                   VALIDATE_CERTS=settings.MAIL_VALIDATE_CERTS,
                   TEMPLATE_FOLDER=cls.__template_path,
           )
-
           fm = FastMail(configuration)
           return fm
 

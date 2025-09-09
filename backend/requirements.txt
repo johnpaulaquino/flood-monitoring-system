@@ -7,3 +7,8 @@ python-dotenv
 passlib[argon2]
 python-jose[cryptography]
 fastapi-mail
+requests
+Authlib
+msgpack
+fernet
+google-auth
