@@ -3,6 +3,8 @@ from fastapi import FastAPI
 
 from app.src.routes.auth_route import auth_router
 
+
+
 app = FastAPI()
 
 

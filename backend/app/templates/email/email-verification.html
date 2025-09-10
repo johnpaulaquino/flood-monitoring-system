@@ -1,11 +1,211 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-    <title>Email Verification</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Your Account</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f4;
+            line-height: 1.6;
+        }
+
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 300;
+        }
+
+        .content {
+            padding: 40px 30px;
+        }
+
+        .welcome-text {
+            color: #333333;
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .description {
+            color: #666666;
+            font-size: 16px;
+            margin-bottom: 30px;
+        }
+
+        .verification-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            margin: 20px 0;
+            transition: transform 0.2s ease;
+        }
+
+        .verification-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .button-container {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .alternative-link {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 30px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .alternative-link h3 {
+            color: #333333;
+            font-size: 16px;
+            margin-top: 0;
+        }
+
+        .alternative-link p {
+            color: #666666;
+            font-size: 14px;
+            margin: 10px 0;
+        }
+
+        .verification-code {
+            background-color: #f1f3f4;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            letter-spacing: 3px;
+            color: #333333;
+            margin: 15px 0;
+        }
+
+        .security-note {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 30px 0;
+        }
+
+        .security-note h4 {
+            color: #856404;
+            margin-top: 0;
+            font-size: 16px;
+        }
+
+        .security-note p {
+            color: #856404;
+            font-size: 14px;
+            margin-bottom: 0;
+        }
+
+        .footer {
+            background-color: #f8f9fa;
+            padding: 30px;
+            text-align: center;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .footer p {
+            color: #6c757d;
+            font-size: 14px;
+            margin: 5px 0;
+        }
+
+        .footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        .social-links {
+            margin: 20px 0 10px 0;
+        }
+
+        .social-links a {
+            display: inline-block;
+            margin: 0 10px;
+            color: #6c757d;
+            font-size: 18px;
+            text-decoration: none;
+        }
+
+        @media only screen and (max-width: 600px) {
+            .email-container {
+                width: 100% !important;
+            }
+
+            .header, .content, .footer {
+                padding: 20px !important;
+            }
+
+            .header h1 {
+                font-size: 24px !important;
+            }
+
+            .verification-button {
+                padding: 12px 30px !important;
+                font-size: 14px !important;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h2>Hello </h2>
-    <p>Click the link below to verify your email:</p>
+<div class="email-container">
+    <!-- Header -->
+    <div class="header">
+        <h1>Verify Your Account</h1>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content">
+        <p class="welcome-text">Welcome to Our Platform!</p>
+
+        <p class="description">
+            Thank you for creating your account. To complete your registration and start using our services,
+            please verify your email address by clicking the button below.
+        </p>
+
+        <!-- Verification Button -->
+        <div class="button-container">
+            <a href="{{activation_api_link}}">
+                <button class="verification-button">
+                    Verify My Account
+                </button>
+            </a>
+
+        </div>
+    </div>
+</div>
 </body>
 </html>

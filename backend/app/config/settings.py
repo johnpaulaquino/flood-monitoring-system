@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from dotenv import load_dotenv
 from pydantic import EmailStr, SecretStr
 from pydantic_settings import BaseSettings
@@ -6,6 +8,7 @@ load_dotenv()
 
 
 class Settings(BaseSettings):
+     TEMPLATE_PATH : Path = Path(__file__).parent.parent / 'templates' / 'email'
      # database URL
      DB_URL: str
 

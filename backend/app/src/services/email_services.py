@@ -1,10 +1,9 @@
-import asyncio
+
 import time
 from pathlib import Path
 from threading import Lock
 
 from fastapi_mail import ConnectionConfig, FastMail, MessageSchema, MessageType
-from pydantic import EmailStr
 
 from app.config.settings import Settings
 
@@ -14,7 +13,7 @@ settings = Settings()
 class EmailServices:
      __instance = {}
      __lock = Lock()
-     __template_path = Path(__file__).parent.parent.parent / 'templates' / 'email'
+
 
      def __new__(cls, *args, **kwargs):
           # we lock the thread and check if there is an instance of object
@@ -37,20 +36,29 @@ class EmailServices:
                   MAIL_SSL_TLS=settings.MAIL_SSL_TLS,
                   USE_CREDENTIALS=settings.MAIL_USE_CREDENTIALS,
                   VALIDATE_CERTS=settings.MAIL_VALIDATE_CERTS,
-                  TEMPLATE_FOLDER=cls.__template_path,
+                  TEMPLATE_FOLDER=settings.TEMPLATE_PATH,
           )
           fm = FastMail(configuration)
           return fm
 
      @classmethod
-     async def send_message(cls, recipient: str):
+     async def send_message_via_clicking(cls, recipient: str, activation_link : str, subject="Account Verification", ):
           fm = cls.get_fastapi_mail()
           message = MessageSchema(
-                  subject="Account Verification",
+                  subject=subject,
                   recipients=[recipient],
-                  template_body={},
+                  template_body={"activation_api_link" : activation_link},
                   subtype=MessageType.html,
           )
           await fm.send_message(message, template_name="email-verification.html")
 
-
+     @classmethod
+     async def send_message_via_code(cls, recipient: str, verification_code : int, subject="Account Verification", ):
+          fm = cls.get_fastapi_mail()
+          message = MessageSchema(
+                  subject=subject,
+                  recipients=[recipient],
+                  template_body={"activation_code": verification_code},
+                  subtype=MessageType.html,
+          )
+          await fm.send_message(message, template_name="email-verification.html")
