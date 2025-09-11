@@ -4,7 +4,7 @@ import requests
 from fastapi import APIRouter, BackgroundTasks, Depends, status, Request
 from fastapi.security import OAuth2PasswordRequestForm
 from jinja2 import Template
-from jose import jwt
+from jose import ExpiredSignatureError, jwt
 from starlette.responses import JSONResponse, RedirectResponse
 from starlette.templating import Jinja2Templates
 
@@ -172,10 +172,13 @@ async def manual_login(data_form: OAuth2PasswordRequestForm = Depends()):
 
 
 @auth_router.get('/activate/account')
-async def activate_user_account(request : Request, token: bool = False ):
+async def activate_user_account(request : Request, token: str ):
      try:
-          if not token:
-               return templates.TemplateResponse(request=request, name="failed-account-verification.html")
+          #activate account then return the html website
+          await AuthController.activate_user_account(token)
           return templates.TemplateResponse(request=request, name="verified-account.html")
+     except ExpiredSignatureError as ex:
+          return templates.TemplateResponse(request=request, name="failed-account-verification.html")
      except Exception as e:
-          raise e
+          return templates.TemplateResponse(request=request, name="failed-account-verification.html")
+

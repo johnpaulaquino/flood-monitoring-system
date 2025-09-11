@@ -21,6 +21,11 @@ class UserServices:
                data = await UserRepository.find_user_by_email(user_.email)
                # check if data exists.
                if data:
+                    if data.status:
+                         raise HTTPException(
+                                 status_code=status.HTTP_200_OK,
+                                 detail={'status' : 'ok',
+                                         'message': 'User is already exist but not verified yet!'})
                     # return JSONResponse
                     raise HTTPException(
                             status_code=status.HTTP_400_BAD_REQUEST,
@@ -31,7 +36,6 @@ class UserServices:
                # Set the arguments for User object
                new_user = Users(email=user_.email, username=user_.username, hash_password=hashed_password)
 
-
                await UserRepository.create_user(new_user)
                # return new User
                return new_user
@@ -40,19 +44,22 @@ class UserServices:
                raise e
 
      @staticmethod
-     async def activate_user_account(email: str):
+     async def activate_user_account(token: str):
           """
           To activate user account based on his/her email.
-          :param email: is a unique to user to activate her/his account.
+          :param token:
           :return: email
           """
           try:
-               data = await UserRepository.find_user_by_email(email)
+
+               payload = AuthSecurity.decode_jwt_token(token)
+               original_data = AuthSecurity.decrypt_data(payload)
+               data = await UserRepository.find_user_by_email(original_data['user_email'])
                if not data:
-                    return JSONResponse(
+                    raise HTTPException(
                             status_code=status.HTTP_404_NOT_FOUND,
-                            content={'status': 'failed', 'message': 'Email is not found'},
+                            detail={'status': 'failed', 'message': 'Email is not found'},
                     )
-               return email
+               return data.email
           except Exception as e:
                raise e

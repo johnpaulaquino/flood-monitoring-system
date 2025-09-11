@@ -56,8 +56,7 @@ class AuthSecurity:
                err_message = JSONResponse(
                        status_code=status.HTTP_401_UNAUTHORIZED,
                        content={'status':'failed', 'message':'Could not validate credentials'},
-                       headers={"WWW-Authenticate":'Bearer'}
-               )
+                       headers={"WWW-Authenticate":'Bearer'})
                if not token:
                     return err_message
 

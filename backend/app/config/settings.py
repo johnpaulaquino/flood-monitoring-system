@@ -8,9 +8,13 @@ load_dotenv()
 
 
 class Settings(BaseSettings):
+     #Template location
      TEMPLATE_PATH : Path = Path(__file__).parent.parent / 'templates' / 'email'
      # database URL
      DB_URL: str
+
+     #HOST
+     HOST : str = 'local'
 
      # email configurations
      MAIL_FROM: EmailStr
