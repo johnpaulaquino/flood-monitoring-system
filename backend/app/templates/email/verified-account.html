@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Account Verified Successfully</title>
+    <link rel="shortcut icon" href="" type="image/x-icon">
     <style>
         * {
             margin: 0;
@@ -13,7 +14,6 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -342,7 +342,7 @@
             <h3>Account Details</h3>
             <div class="info-row">
                 <span class="info-label">Email Address:</span>
-                <span class="info-value">user@example.com</span>
+                <span class="info-value">{{email_address}}</span>
             </div>
             <div class="info-row">
                 <span class="info-label">Account Status:</span>
@@ -350,7 +350,7 @@
             </div>
             <div class="info-row">
                 <span class="info-label">Verified On:</span>
-                <span class="info-value">September 10, 2024</span>
+                <span class="info-value">{{date_today}}</span>
             </div>
         </div>
 

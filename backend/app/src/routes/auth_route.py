@@ -1,32 +1,30 @@
-import time
+from datetime import date
 
-import requests
-from fastapi import APIRouter, BackgroundTasks, Depends, status, Request
+from fastapi import APIRouter, BackgroundTasks, Depends, Request, status
 from fastapi.security import OAuth2PasswordRequestForm
-from jinja2 import Template
-from jose import ExpiredSignatureError, jwt
+from jose import ExpiredSignatureError
 from starlette.responses import JSONResponse, RedirectResponse
 from starlette.templating import Jinja2Templates
 
 from app.config.settings import Settings
-from app.src.controller.auth_controller import AuthController
-from app.src.database.models import Users
 from app.src.database.models.users_model import CreateUser
 from app.src.database.repositories.user_repository import UserRepository
 from app.src.security.auth_security import AuthSecurity
+from app.src.services.auth_services import AuthServices
 
 auth_router = APIRouter(
-        prefix='/api/v1/auth', )
+        prefix='/api/v1/auth',
+        tags=['Authentication'])
 
 settings = Settings()
 
-
 templates = Jinja2Templates(directory=settings.TEMPLATE_PATH)
+
 
 @auth_router.post('/create-account')
 async def create_account(background_task: BackgroundTasks, user_: CreateUser):
      try:
-          return await AuthController.create_user_account(user_, background_task)
+          return await AuthServices.create_user_account(user_, background_task)
      except Exception as e:
           raise e
 
@@ -50,63 +48,12 @@ async def login_via_google():
 @auth_router.get('/google/callback')
 async def oauth_callback(code: str):
      """
-
-     :param code:
-     :return:
+     A function that retrieve the data after successful linked account in google.
+     :param code: a unique code that response from Google auth
+     :return: JSON Response
      """
      try:
-          token_url = "https://oauth2.googleapis.com/token"
-          token_data = {
-                  "code"         : code,
-                  "client_id"    : settings.GOOGLE_CLIENT_ID,
-                  "client_secret": settings.GOOGLE_CLIENT_SECRET,
-                  "redirect_uri" : settings.REDIRECT_URI,
-                  "grant_type"   : "authorization_code",
-          }
-
-          token_response = requests.post(token_url, data=token_data).json()
-          if "id_token" not in token_response:
-               return JSONResponse(
-                       status_code=status.HTTP_400_BAD_REQUEST,
-                       content={'status': 'failed', 'message': 'Failed to retrieve id token'})
-
-          user_info = jwt.get_unverified_claims(token_response["id_token"])
-
-          user_email = user_info['email']
-          username = user_info['name']
-          given_name = user_info['given_name']
-          family_name = user_info['family_name']
-
-          user_data = {'user_email': user_email}
-
-          data = await UserRepository.find_user_by_email(user_email)
-
-          new_user = Users(username=username, email=user_email)
-          # if not exist which is signup
-
-          if not data:
-               await UserRepository.create_user(new_user)
-               return JSONResponse(
-                       status_code=status.HTTP_201_CREATED,
-                       content={'status': 'ok', 'message': 'Successfully created account',
-                                'action': 'signup'})
-
-          # otherwise login
-          to_encode = {'user_id'            : data.id,
-                       'profile_setup_steps': data.profile_setup_steps,
-                       'user_status'        : data.status}
-
-          data_refresh_token = {'user_id': data.id, 'user_email': data.email}
-          generated_access_token = AuthSecurity.generate_access_token(to_encode)
-
-          return JSONResponse(
-                  status_code=status.HTTP_200_OK,
-                  content={'status'              : 'ok',
-                           'action'              : 'login',
-                           'access_token'        : generated_access_token,
-                           'refresh_access_token': data_refresh_token,
-                           'access_type'         : 'bearer'}, )
-
+          return await AuthServices.oauth_callback(code)
      except Exception as e:
           raise e
 
@@ -172,13 +119,15 @@ async def manual_login(data_form: OAuth2PasswordRequestForm = Depends()):
 
 
 @auth_router.get('/activate/account')
-async def activate_user_account(request : Request, token: str ):
+async def activate_user_account(request: Request, token: str):
      try:
-          #activate account then return the html website
-          await AuthController.activate_user_account(token)
-          return templates.TemplateResponse(request=request, name="verified-account.html")
+          # activate account then return the html website
+          email_address = await AuthServices.activate_user_account(token)
+
+          contex = {'email_address':email_address,
+                    'date_today':date.today()}
+          return templates.TemplateResponse(request=request,context=contex, name="verified-account.html")
      except ExpiredSignatureError as ex:
           return templates.TemplateResponse(request=request, name="failed-account-verification.html")
      except Exception as e:
           return templates.TemplateResponse(request=request, name="failed-account-verification.html")
-

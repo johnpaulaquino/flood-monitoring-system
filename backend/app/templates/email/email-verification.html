@@ -3,209 +3,153 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verify Your Account</title>
+    <title>Email Verification</title>
     <style>
+        /* Reset styles for email clients */
+        body, table, td, p, a, li, blockquote {
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+        }
+        table, td {
+            mso-table-lspace: 0pt;
+            mso-table-rspace: 0pt;
+        }
+        img {
+            -ms-interpolation-mode: bicubic;
+        }
+
+        /* Main styles */
         body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0 !important;
+            padding: 0 !important;
             background-color: #f4f4f4;
-            line-height: 1.6;
+            font-family: Arial, sans-serif;
         }
 
         .email-container {
             max-width: 600px;
             margin: 0 auto;
             background-color: #ffffff;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
 
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 40px 30px;
+            background-color: #4CAF50;
+            padding: 40px 20px;
             text-align: center;
         }
 
         .header h1 {
+            color: #ffffff;
             margin: 0;
             font-size: 28px;
-            font-weight: 300;
+            font-weight: bold;
         }
 
         .content {
             padding: 40px 30px;
+            text-align: center;
         }
 
-        .welcome-text {
+        .content h2 {
             color: #333333;
-            font-size: 18px;
+            font-size: 24px;
             margin-bottom: 20px;
         }
 
-        .description {
+        .content p {
             color: #666666;
             font-size: 16px;
+            line-height: 1.6;
             margin-bottom: 30px;
         }
 
-        .verification-button {
+        .verify-button {
             display: inline-block;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            padding: 15px 30px;
+            background-color: #4CAF50;
+            color: #ffffff !important;
             text-decoration: none;
-            padding: 15px 40px;
-            border-radius: 50px;
-            font-size: 16px;
-            font-weight: bold;
-            text-align: center;
-            margin: 20px 0;
-            transition: transform 0.2s ease;
-        }
-
-        .verification-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        .button-container {
-            text-align: center;
-            margin: 30px 0;
-        }
-
-        .alternative-link {
-            background-color: #f8f9fa;
-            padding: 20px;
-            border-radius: 8px;
-            margin: 30px 0;
-            border-left: 4px solid #667eea;
-        }
-
-        .alternative-link h3 {
-            color: #333333;
-            font-size: 16px;
-            margin-top: 0;
-        }
-
-        .alternative-link p {
-            color: #666666;
-            font-size: 14px;
-            margin: 10px 0;
-        }
-
-        .verification-code {
-            background-color: #f1f3f4;
-            padding: 15px;
-            border-radius: 6px;
-            font-family: 'Courier New', monospace;
+            border-radius: 5px;
             font-size: 18px;
             font-weight: bold;
-            text-align: center;
-            letter-spacing: 3px;
-            color: #333333;
-            margin: 15px 0;
+            margin: 20px 0;
+        }
+        .verify-button:hover {
+            background-color: #45a049;
+        }
+        .backup-link {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eeeeee;
         }
 
-        .security-note {
-            background-color: #fff3cd;
-            border: 1px solid #ffeaa7;
-            border-radius: 6px;
-            padding: 15px;
-            margin: 30px 0;
-        }
-
-        .security-note h4 {
-            color: #856404;
-            margin-top: 0;
-            font-size: 16px;
-        }
-
-        .security-note p {
-            color: #856404;
+        .backup-link p {
             font-size: 14px;
-            margin-bottom: 0;
+            color: #999999;
+        }
+
+        .backup-link a {
+            color: #4CAF50;
+            word-break: break-all;
         }
 
         .footer {
-            background-color: #f8f9fa;
-            padding: 30px;
+            background-color: #f8f8f8;
+            padding: 20px;
             text-align: center;
-            border-top: 1px solid #e9ecef;
-        }
-
-        .footer p {
-            color: #6c757d;
             font-size: 14px;
-            margin: 5px 0;
+            color: #999999;
         }
 
-        .footer a {
-            color: #667eea;
-            text-decoration: none;
-        }
-
-        .footer a:hover {
-            text-decoration: underline;
-        }
-
-        .social-links {
-            margin: 20px 0 10px 0;
-        }
-
-        .social-links a {
-            display: inline-block;
-            margin: 0 10px;
-            color: #6c757d;
-            font-size: 18px;
-            text-decoration: none;
-        }
-
-        @media only screen and (max-width: 600px) {
+        /* Mobile responsiveness */
+        @media screen and (max-width: 600px) {
             .email-container {
                 width: 100% !important;
             }
-
-            .header, .content, .footer {
-                padding: 20px !important;
+            .content {
+                padding: 30px 20px !important;
             }
-
-            .header h1 {
-                font-size: 24px !important;
+            .header {
+                padding: 30px 20px !important;
             }
-
-            .verification-button {
-                padding: 12px 30px !important;
-                font-size: 14px !important;
+            .verify-button {
+                padding: 12px 25px !important;
+                font-size: 16px !important;
             }
         }
     </style>
 </head>
 <body>
-<div class="email-container">
-    <!-- Header -->
-    <div class="header">
-        <h1>Verify Your Account</h1>
-    </div>
+    <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+        <tr>
+            <td>
+                <div class="email-container">
+                    <!-- Header -->
+                    <div class="header">
+                        <h1>Verify Your Email</h1>
+                    </div>
 
-    <!-- Main Content -->
-    <div class="content">
-        <p class="welcome-text">Welcome to Our Platform!</p>
+                    <!-- Content -->
+                    <div class="content">
+                        <h2>Welcome!</h2>
+                        <p>Thanks for signing up! Please verify your email address to complete your registration and get started.</p>
 
-        <p class="description">
-            Thank you for creating your account. To complete your registration and start using our services,
-            please verify your email address by clicking the button below.
-        </p>
+                        <!-- Verification Button -->
+                        <a href="{{activation_api_link}}" class="verify-button">
+                            Verify Email Address
+                        </a>
 
-        <!-- Verification Button -->
-        <div class="button-container">
-            <a href="{{activation_api_link}}">
-                <button class="verification-button">
-                    Verify My Account
-                </button>
-            </a>
+                        <p style="margin-top: 30px; font-size: 14px;">This link will expire in 24 hours for security reasons.</p>
+                    </div>
 
-        </div>
-    </div>
-</div>
+                    <!-- Footer -->
+                    <div class="footer">
+                        <p>© 2025 Your Company Name. All rights reserved.</p>
+                        <p>If you didn't request this email, you can safely ignore it.</p>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </table>
 </body>
 </html>
