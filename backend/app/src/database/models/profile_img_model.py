@@ -13,3 +13,7 @@ class ProfileImage(BaseProfileImage,table=True):
      __tablename__  = "profile_img"
      id : int = Field(default=None, primary_key=True, index=True)
      user_id : str = Field(foreign_key='users.id', ondelete="CASCADE")
+
+
+class UpdateProfileImage(BaseProfileImage):
+     pass

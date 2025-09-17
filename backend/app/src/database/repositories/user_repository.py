@@ -5,6 +5,7 @@ from sqlmodel import delete, select, update
 from app.src.database.engine_creator import create_session
 from app.src.database.models import Address, PersonalInformation, ProfileImage, Users
 from app.src.database.models.address_model import UpdateAddress
+from app.src.database.models.profile_img_model import UpdateProfileImage
 from app.src.security.auth_security import AuthSecurity
 
 
@@ -55,7 +56,7 @@ class UserRepository:
                             Users.id == user_id))
                     result = await db.execute(stmt)
                     data = result.mappings().unique().all()
-                    return data
+                    return data[0]
                except Exception as e:
                     raise e
 
@@ -142,12 +143,7 @@ class UserRepository:
           async with create_session() as db:
                try:
                     stmt = update(PersonalInformation).values(
-                            age=personal_info.age,
-                            gender=personal_info.gender,
-                            birthdate=personal_info.birthdate,
-                            firstname=personal_info.firstname,
-                            middle_name=personal_info.middle_name,
-                            last_name=personal_info.last_name,
+                         personal_info
                     ).where(PersonalInformation.user_id == user_id)
                     await db.execute(stmt)
                     await db.commit()
@@ -156,12 +152,11 @@ class UserRepository:
                     raise e
 
      @staticmethod
-     async def update_profile_image(user_id: str, prof_image: ProfileImage):
+     async def update_profile_image(user_id: str, prof_image: UpdateProfileImage):
           async with create_session() as db:
                try:
                     stmt = update(ProfileImage).values(
-                            img_url=prof_image.img_url,
-                            public_key=prof_image.public_key,
+                            prof_image
                     ).where(ProfileImage.user_id == user_id)
                     await db.execute(stmt)
                     await db.commit()
