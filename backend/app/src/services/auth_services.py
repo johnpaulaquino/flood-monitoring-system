@@ -31,7 +31,7 @@ class AuthServices:
                data = await UserRepository.find_user_by_email(user_.email)
                # check if data exists.
                if data:
-                    if data.status:
+                    if data.status =='pending':
                          return JSONResponse(
                                  status_code=status.HTTP_200_OK,
                                  content={'status' : 'ok',
@@ -53,10 +53,10 @@ class AuthServices:
                generated_token = AuthSecurity.generate_access_token({"user_email": new_user.email})
 
                # For localhost only when try to access in phone
-               ip_localhost_for_mobile =socket.gethostbyname(socket.gethostname())
+               ip_localhost_for_mobile = AuthSecurity.get_local_ip()
 
                # API Endpoint where to activate the user account
-               url_link_for_activation = f"http://{ip_localhost_for_mobile}:9090/api/v1/auth/activate/account?token={generated_token}"
+               url_link_for_activation = f"http://{ip_localhost_for_mobile}:{settings.SERVER_PORT}/api/v1/auth/activate/account?token={generated_token}"
 
                # send the activation link in email
                background_task.add_task(EmailServices.send_message_via_clicking, user_.email, url_link_for_activation)

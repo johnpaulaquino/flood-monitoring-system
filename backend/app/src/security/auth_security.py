@@ -1,12 +1,13 @@
+import socket
 from datetime import datetime, timedelta, timezone
 from typing import Any
-from fastapi import status
+from fastapi import HTTPException, status
 import msgpack
 from cryptography.fernet import Fernet
-from jose import ExpiredSignatureError, jwt, JWTError
+from jose import ExpiredSignatureError, jwt
 from msgpack import unpackb
 from passlib.context import CryptContext
-from starlette.responses import JSONResponse
+
 
 from app.config.settings import Settings
 
@@ -50,28 +51,30 @@ class AuthSecurity:
           encoded = jwt.encode(encrypted_data, key=settings.JWT_KEY, algorithm=settings.JWT_ALGORITHM)
           return encoded
 
+     @classmethod
+     def generate_refresh_token(cls, to_encode):
+          pass
+
      @staticmethod
      def decode_jwt_token(token : str):
           try:
-               err_message = JSONResponse(
+               err_message = HTTPException(
                        status_code=status.HTTP_401_UNAUTHORIZED,
-                       content={'status':'failed', 'message':'Could not validate credentials'},
+                       detail={'status':'failed', 'message':'Could not validate credentials'},
                        headers={"WWW-Authenticate":'Bearer'})
                if not token:
-                    return err_message
+                    raise err_message
 
+               #decode the token
                payload= jwt.decode(token,key=settings.JWT_KEY,algorithms=[settings.JWT_ALGORITHM])
                if not payload.get('data'):
-                    return err_message
+                    raise err_message
 
+               #return the data
                return payload.get('data')
 
           except ExpiredSignatureError as e:
                raise e
-
-     @classmethod
-     def generate_refresh_token(cls, to_encode):
-          pass
 
      @classmethod
      def encrypt_data(cls, to_encode: Any):
@@ -87,3 +90,19 @@ class AuthSecurity:
           unpacked_data = unpackb(decrypted_data)
 
           return unpacked_data
+
+     @staticmethod
+     def get_local_ip():
+          """
+          Return the local LAN IP address (e.g. 192.168.x.x).
+          Works cross-platform and does not send data to the remote host.
+          """
+          try:
+               # use a public IP and UDP to avoid sending data
+               with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
+                    # connecting to a public IP (Google DNS). No packet is sent.
+                    s.connect(("8.8.8.8", 80))
+                    return s.getsockname()[0]
+          except OSError:
+               # fallback: localhost if nothing else works
+               return "127.0.0.1"

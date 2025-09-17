@@ -1,7 +1,10 @@
+import asyncio
+
 from sqlmodel import delete, select, update
 
 from app.src.database.engine_creator import create_session
 from app.src.database.models import Address, PersonalInformation, ProfileImage, Users
+from app.src.database.models.address_model import UpdateAddress
 from app.src.security.auth_security import AuthSecurity
 
 
@@ -11,9 +14,20 @@ class UserRepository:
           async with create_session() as db:
                try:
                     db.add(user)
+                    await db.flush()
+
+                    # add the user_id in address and profile pic for the mean time.
+                    address = Address(user_id=user.id)
+                    profile_pic = ProfileImage(user_id=user.id)
+                    personal_info = PersonalInformation(user_id=user.id)
+                    # add in database
+                    db.add_all([address, profile_pic, personal_info])
+                    # commit the transaction
                     await db.commit()
+                    # refresh the user
                     await db.refresh(user)
                except Exception as e:
+                    # rollback the transaction if error occurred
                     await db.rollback()
                     raise e
 
@@ -32,7 +46,8 @@ class UserRepository:
      async def find_user_by_id(user_id: str):
           async with create_session() as db:
                try:
-                    stmt = (select(Users, PersonalInformation, Address, ProfileImage)
+                    stmt = (select(Users.email,Users.id,Users.username,Users.status,
+                                   PersonalInformation, Address, ProfileImage)
                     .outerjoin(PersonalInformation, Users.id == PersonalInformation.user_id)
                     .outerjoin(Address, Users.id == Address.user_id)
                     .outerjoin(ProfileImage, Users.id == ProfileImage.user_id)
@@ -70,7 +85,13 @@ class UserRepository:
 
      @staticmethod
      async def delete_user(user_id: str):
+          """
+          To delete user
+          :param user_id: a unique id for every user.
+          :return:  Nothing
+          """
           async with create_session() as db:
+
                try:
                     stmt = delete(Users).where(Users.id == user_id)
                     await db.execute(stmt)
@@ -81,6 +102,12 @@ class UserRepository:
 
      @classmethod
      async def update_password(cls, email: str, new_password: str):
+          """
+          To update password
+          :param email: is the unique credentials to update the password
+          :param new_password: To be hashed and store in db.
+          :return:
+          """
           async with create_session() as db:
                try:
                     hashed_new_password = AuthSecurity.hash_password(new_password)
@@ -94,19 +121,19 @@ class UserRepository:
                     await db.rollback()
                     raise e
 
+     # Address
      @staticmethod
-     async def update_address(user_id: str, address: Address):
+     async def update_address(user_id: str, address: UpdateAddress):
           async with create_session() as db:
                try:
-                    stmt = update(Address).values(
-                            barangay=address.barangay,
-                            city=address.city,
-                            municipality=address.municipality,
-                            province=address.province,
-                    ).where(address.user_id == user_id)
+                    # update statement
+                    stmt = update(Address).values(address).where(Address.user_id == user_id)
+                    # execute the stmt
                     await db.execute(stmt)
+                    # commit the transaction
                     await db.commit()
                except Exception as e:
+                    # rollback the transaction if error occurred
                     await db.rollback()
                     raise e
 

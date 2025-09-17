@@ -12,3 +12,4 @@ Authlib
 msgpack
 fernet
 google-auth
+cloudinary

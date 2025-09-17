@@ -13,8 +13,14 @@ class Settings(BaseSettings):
      # database URL
      DB_URL: str
 
-     #HOST
-     HOST : str = 'local'
+     #SERVER
+     SERVER_PORT : int
+
+     # Cloudinary Configuration
+     C_NAME : str
+     C_KEY :  str
+     C_SECRET : str
+     C_SECURE : bool
 
      # email configurations
      MAIL_FROM: EmailStr

@@ -1,5 +1,6 @@
+import stat
 from datetime import date
-
+import os,sys
 
 class GlobalUtils:
 
@@ -37,3 +38,35 @@ class GlobalUtils:
                age = 1
           # then return age
           return age
+
+
+     @staticmethod
+     def validate_image_file_extension(file_name):
+          allowed_extensions = ("jpeg","jpg","png","webp","tiff","avif")
+          if not file_name.lower().endswith(allowed_extensions):
+               raise ValueError(f'File extension should be in {allowed_extensions}!')
+          return True
+
+     @staticmethod
+     def is_file_uploaded(img_file):
+          """
+          To check if there is a file uploaded in the server and check if it is a valid image file.
+          :param img_file: To upload in server to check.
+          :return: True, if there's a file and valid filename, otherwise False.
+          """
+          #set flag as not uploaded
+          is_file_upload = False
+          #check if there's file uploaded in server
+          if img_file:
+               #check if the size is valid
+               if img_file.size > 0:
+                    try:
+                         #validate the image if
+                         GlobalUtils.validate_image_file_extension(img_file.filename)
+                         # then set flag as uploaded or True
+                         is_file_upload = True
+                    except Exception as e:
+                         #raise error if not valid
+                         raise e
+
+          return is_file_upload

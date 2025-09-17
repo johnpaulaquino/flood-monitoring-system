@@ -1,6 +1,6 @@
 from datetime import date
 
-from fastapi import APIRouter, BackgroundTasks, Depends, Request, status
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Request, status
 from fastapi.security import OAuth2PasswordRequestForm
 from jose import ExpiredSignatureError
 from starlette.responses import JSONResponse, RedirectResponse
@@ -74,16 +74,16 @@ async def manual_login(data_form: OAuth2PasswordRequestForm = Depends()):
           user_ = await UserRepository.find_user_by_email(data_form.username)
           # check if user exists
           if not user_:
-               return JSONResponse(
+               raise HTTPException(
                        status_code=status.HTTP_404_NOT_FOUND,
-                       content={'status': 'failed', 'message': "User not found"},
+                       detail={'status': 'failed', 'message': "User not found"},
                        headers={'WWW-Authenticate': "Bearer"},
                )
           # check if user is verified
           if user_.status == "pending":
-               return JSONResponse(
+               raise HTTPException(
                        status_code=status.HTTP_400_BAD_REQUEST,
-                       content={'status': 'failed', 'message': "Please verify your email first "},
+                       detail={'status': 'failed', 'message': "Please verify your email first "},
                        headers={'WWW-Authenticate': "Bearer"},
                )
           # check if user password is none
@@ -95,12 +95,12 @@ async def manual_login(data_form: OAuth2PasswordRequestForm = Depends()):
                )
           # check if provided password is match to the hash password is db
           if not AuthSecurity.verify_hashed_password(data_form.password, user_.hash_password):
-               return JSONResponse(
+               raise HTTPException(
                        status_code=status.HTTP_400_BAD_REQUEST,
-                       content={'status': 'failed', 'message': "Incorrect password"},
+                       detail={'status': 'failed', 'message': "Incorrect password"},
                        headers={'WWW-Authenticate': "Bearer"})
 
-          # if passed to all condition, then generate a access and refresh token
+          # if passed to all condition, then generate an access and refresh token
           to_encode = {"user_id": user_.id}
           to_encode_refresh_token = {"user_id": user_.id, 'user_email': user_.email}
           generated_access_token = AuthSecurity.generate_access_token(to_encode)
