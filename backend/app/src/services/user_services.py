@@ -8,7 +8,6 @@ from app.src.database.repositories.user_repository import UserRepository
 from app.src.services.cloudinary_services import CloudinaryServices
 from app.src.utils.global_utils import GlobalUtils
 
-
 class UserServices:
 
      @staticmethod
@@ -73,39 +72,38 @@ class UserServices:
                data = await UserRepository.find_user_by_id(current_user)
                # check if not exist
                if not data:
-                    #then raise an error
+                    # then raise an error
                     raise HTTPException(
                             status_code=status.HTTP_404_NOT_FOUND,
                             detail={"status": 'fail', 'message': 'User not found'},
                     )
-               #check if all fields in schema is null or not set
-               to_inserted = personal_information.model_dump(exclude_none=True,exclude_unset=True)
+               # check if all fields in schema is null or not set
+               to_inserted = personal_information.model_dump(exclude_none=True, exclude_unset=True)
                if not to_inserted:
-                    #then return JSONResponse
+                    # then return JSONResponse
                     return JSONResponse(
                             status_code=status.HTTP_200_OK,
                             content={'status': 'ok', 'message': 'No changes made'},
                     )
-               #set age
+               # set age
                new_age = 0
-               #check if birthdate is set on schema
+               # check if birthdate is set on schema
                if personal_information.birthdate:
-                    #then calculate age
+                    # then calculate age
                     new_age = GlobalUtils.calculate_age(personal_information.birthdate)
 
-               #then get the old personal info
+               # then get the old personal info
                old_personal_info: PersonalInformation = data['PersonalInformation']
-               #then copy it and update the value based on the schema
+               # then copy it and update the value based on the schema
                new_data = old_personal_info.model_copy(
                        update=personal_information.model_dump(exclude_unset=True,
-                                                              exclude_none=True),
-               )
-               #check if the age is not less than to 0
+                                                              exclude_none=True))
+               # check if the age is not less than to 0
                if new_age > 0:
                     # then set new age
                     new_data.age = new_age
 
-               #update the personal information in database
+               # update the personal information in database
                await UserRepository.update_personal_information(current_user, new_data.model_dump())
                # then return Response
                return JSONResponse(

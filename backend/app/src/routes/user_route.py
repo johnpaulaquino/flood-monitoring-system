@@ -3,6 +3,7 @@ from fastapi import APIRouter, BackgroundTasks, Depends, File, UploadFile
 from app.src.database.models.address_model import UpdateAddress
 from app.src.database.models.personal_information_models import UpdatePersonalInformation
 from app.src.dependencies.auth_dependencies import AuthDependency
+from app.src.realtime import LocalEventStream
 from app.src.services.user_services import UserServices
 
 user_router = APIRouter(
@@ -39,3 +40,8 @@ async def update_personal_information(current_user=Depends(AuthDependency.get_cu
           return await UserServices.update_user_personal_information(current_user, personal_information)
      except Exception as e:
           raise e
+
+
+@user_router.post('test')
+async def tester(data):
+     LocalEventStream.produce_data(data)

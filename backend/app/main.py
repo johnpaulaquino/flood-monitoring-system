@@ -5,11 +5,16 @@ import socket
 from app.config.settings import Settings
 from app.src.routes.auth_route import auth_router
 from app.src.routes.user_route import user_router
+from app.src.utils.app_utils import AppUtils
 
 settings = Settings()
 
 
-app = FastAPI()
+lifespan = AppUtils()
+
+app = FastAPI(
+        lifespan=lifespan.life_span
+)
 
 
 app.include_router(auth_router)

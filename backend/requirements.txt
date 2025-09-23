@@ -13,3 +13,4 @@ msgpack
 fernet
 google-auth
 cloudinary
+confluent-kafka
