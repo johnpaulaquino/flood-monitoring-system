@@ -87,14 +87,14 @@ async def manual_login(data_form: OAuth2PasswordRequestForm = Depends()):
                        headers={'WWW-Authenticate': "Bearer"},
                )
           # check if user password is none
-          if user_.hash_password is None:
+          if user_.password is None:
                return JSONResponse(
                        status_code=status.HTTP_400_BAD_REQUEST,
                        content={'status': 'failed', 'message': "Please change your password"},
                        headers={'WWW-Authenticate': "Bearer"},
                )
           # check if provided password is match to the hash password is db
-          if not AuthSecurity.verify_hashed_password(data_form.password, user_.hash_password):
+          if not AuthSecurity.verify_hashed_password(data_form.password, user_.password):
                raise HTTPException(
                        status_code=status.HTTP_400_BAD_REQUEST,
                        detail={'status': 'failed', 'message': "Incorrect password"},

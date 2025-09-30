@@ -16,7 +16,6 @@ class UserRepository:
                try:
                     db.add(user)
                     await db.flush()
-
                     # add the user_id in address and profile pic for the mean time.
                     address = Address(user_id=user.id)
                     profile_pic = ProfileImage(user_id=user.id)
@@ -56,17 +55,12 @@ class UserRepository:
                             Users.id == user_id))
                     result = await db.execute(stmt)
                     data = result.mappings().unique().all()
+                    if not data:
+                         return data
                     return data[0]
                except Exception as e:
                     raise e
 
-     @staticmethod
-     async def update_user(user_id: str, user: Users):
-          async with create_session() as db:
-               try:
-                    pass
-               except Exception as e:
-                    raise e
 
      @staticmethod
      async def activate_user_account(email: str):

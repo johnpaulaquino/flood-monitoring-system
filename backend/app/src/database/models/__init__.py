@@ -1,6 +1,7 @@
 from sqlmodel import SQLModel
 
 from app.src.database.models.address_model import Address
+from app.src.database.models.announcements_model import Announcements
 from app.src.database.models.personal_information_models import PersonalInformation
 from app.src.database.models.profile_img_model import ProfileImage
 from app.src.database.models.users_model import Users
@@ -11,5 +12,5 @@ __all__ = [
         "Address",
         "PersonalInformation",
         "ProfileImage",
-        "Base"
-]
+        "Announcements",
+        "Base"]

@@ -15,9 +15,9 @@ class BaseUsers(SQLModel):
 
 class Users(BaseUsers, table=True):
      __tablename__ = 'users'
-     id: str = Field(default=str(uuid.uuid4()), primary_key=True, index=True)
+     id: str = Field(default_factory=lambda : str(uuid.uuid4()), primary_key=True, index=True)
      role: str = Field(default='user')
-     hash_password: str = Field(default=None, nullable=True)
+     password: str = Field(default=None, nullable=True)
      status: str = Field(default='pending', index=True)
      is_profile_completed: bool = Field(default=False)
      # 1 Email Verification

@@ -23,17 +23,20 @@ cloudinary.config(
 class CloudinaryServices:
 
      @staticmethod
-     async def upload_image(url_img, public_id: str) -> str:
+     async def upload_image(url_img, public_id: str, is_profile_picture) -> str:
 
           # upload the image in cloudinary
+          asset_folder = 'fms/display-photo'
+          if not is_profile_picture:
+               asset_folder = 'fms/announcements-photos'
           result = await asyncio.to_thread(cloudinary.uploader.upload,
-                  url_img,
-                  public_id=public_id,
-                  overwrite=True,
-                  secure=True,
-                  asset_folder='fms',
-                  resource_type="image",
-          )
+                                           url_img,
+                                           public_id=public_id,
+                                           overwrite=True,
+                                           secure=True,
+                                           asset_folder=asset_folder,
+                                           resource_type="image",
+                                           )
           # get the url of the uploaded image
           url = result.get("secure_url")
           # then return it
@@ -43,18 +46,18 @@ class CloudinaryServices:
      async def update_image_file(current_user: str,
                                  filename,
                                  old_public_id,
-                                 image_bytes: UploadFile = File(), ):
+                                 image_bytes: UploadFile = File(), is_profile_picture=True):
           public_id = None
 
           try:
                # generate public id
-               public_id = CloudinaryServices.generate_public_id(filename, current_user)
+               public_id = CloudinaryServices.generate_public_id(filename, current_user,is_profile_picture)
 
                # check if user have a profile picture
                if old_public_id is not None:
                     cloudinary.uploader.destroy(old_public_id)
                # upload in cloudinary and return the secure url
-               image_url = await CloudinaryServices.upload_image(image_bytes, public_id)
+               image_url = await CloudinaryServices.upload_image(image_bytes, public_id, )
                # then update the profile picture
                new_profile_picture = UpdateProfileImage(public_key=public_id, img_url=image_url)
                # update picture

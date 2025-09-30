@@ -44,7 +44,7 @@ class AuthServices:
                # hash password
                hashed_password = AuthSecurity.hash_password(user_.password)
                # Set the arguments for User object
-               new_user = Users(email=user_.email, username=user_.username, hash_password=hashed_password)
+               new_user = Users(email=user_.email, username=user_.username, password=hashed_password)
 
                # Insert in database
                await UserRepository.create_user(new_user)

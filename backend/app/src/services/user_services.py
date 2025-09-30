@@ -13,7 +13,8 @@ class UserServices:
      @staticmethod
      async def update_user_address(address: UpdateAddress, current_user):
           try:
-               data = await UserRepository.find_user_by_id(current_user)
+               user_id = current_user['id']
+               data = await UserRepository.find_user_by_id(user_id)
                if not data:
                     raise HTTPException(
                             status_code=status.HTTP_404_NOT_FOUND,
@@ -40,20 +41,16 @@ class UserServices:
                                          image_file: UploadFile = File(None),
                                          ):
           try:
-               data = await UserRepository.find_user_by_id(current_user)
-               if not data:
-                    raise HTTPException(
-                            status_code=status.HTTP_404_NOT_FOUND,
-                            detail={'status': 'ok', 'message': 'User not found'})
+               user_id = current_user['id']
+               profile_old_profile_picture = current_user['ProfileImage'].model_dump().get('public_key') if current_user['ProfileImage'] else None
 
-               profile_old_profile_picture = data['ProfileImage'].public_key
                if not GlobalUtils.is_file_uploaded(img_file=image_file):
                     return JSONResponse(
                             status_code=status.HTTP_200_OK,
                             content={'status': 'ok', 'message': 'No changes made'})
                filename = image_file.filename
                background_task.add_task(CloudinaryServices.update_image_file,
-                                        current_user,
+                                        user_id,
                                         filename,
                                         profile_old_profile_picture,
                                         image_file.file.read())
@@ -68,8 +65,9 @@ class UserServices:
      async def update_user_personal_information(current_user,
                                                 personal_information: UpdatePersonalInformation):
           try:
+               user_id = current_user['id']
                # get the data
-               data = await UserRepository.find_user_by_id(current_user)
+               data = await UserRepository.find_user_by_id(user_id)
                # check if not exist
                if not data:
                     # then raise an error
@@ -104,7 +102,7 @@ class UserServices:
                     new_data.age = new_age
 
                # update the personal information in database
-               await UserRepository.update_personal_information(current_user, new_data.model_dump())
+               await UserRepository.update_personal_information(user_id, new_data.model_dump())
                # then return Response
                return JSONResponse(
                        status_code=status.HTTP_200_OK,
